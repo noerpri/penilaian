@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplikasi Penilaian Siswa</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fas fa-graduation-cap"></i> Penilaian</h2>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#" class="nav-link active" data-section="dashboard"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li><a href="#" class="nav-link" data-section="nilai-ulangan"><i class="fas fa-book"></i> Ulangan Harian</a></li>
+                <li><a href="#" class="nav-link" data-section="nilai-sumatif"><i class="fas fa-clipboard-list"></i> Penilaian Sumatif</a></li>
+                <li><a href="#" class="nav-link" data-section="nilai-ujian"><i class="fas fa-exam"></i> Ujian Akhir</a></li>
+                <li><a href="#" class="nav-link" data-section="tugas-praktek"><i class="fas fa-wrench"></i> Tugas Praktik</a></li>
+                <li><a href="#" class="nav-link" data-section="tugas-lks"><i class="fas fa-file-alt"></i> Tugas LKS</a></li>
+                <li><a href="#" class="nav-link" data-section="tugas-mandiri"><i class="fas fa-pencil-alt"></i> Tugas Mandiri</a></li>
+                <li><a href="#" class="nav-link" data-section="tugas-kelompok"><i class="fas fa-users"></i> Tugas Kelompok</a></li>
+                <li><a href="#" class="nav-link" data-section="rekap"><i class="fas fa-chart-bar"></i> Rekap Nilai</a></li>
+                <li><a href="#" class="nav-link" data-section="pengaturan"><i class="fas fa-cog"></i> Pengaturan</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-content">
+                    <button class="menu-toggle" id="menuToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1 id="pageTitle">Dashboard</h1>
+                </div>
+                <div class="header-right">
+                    <div class="search-box">
+                        <input type="text" placeholder="Cari siswa..." id="searchInput">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <div class="user-profile">
+                        <img src="https://ui-avatars.com/api/?name=Admin&background=4CAF50&color=fff" alt="Profile">
+                        <span>Admin</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <div class="content-wrapper">
+                <!-- Dashboard Section -->
+                <section id="dashboard" class="section active">
+                    <div class="dashboard-grid">
+                        <div class="stat-card primary">
+                            <div class="stat-icon"><i class="fas fa-users"></i></div>
+                            <div class="stat-info">
+                                <p>Total Siswa</p>
+                                <h3 id="totalSiswa">0</h3>
+                            </div>
+                        </div>
+                        <div class="stat-card success">
+                            <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                            <div class="stat-info">
+                                <p>Rata-rata Nilai</p>
+                                <h3 id="rataRataNilai">0.00</h3>
+                            </div>
+                        </div>
+                        <div class="stat-card warning">
+                            <div class="stat-icon"><i class="fas fa-exclamation-circle"></i></div>
+                            <div class="stat-info">
+                                <p>Perbaikan Diperlukan</p>
+                                <h3 id="perbaikanDiperlukan">0</h3>
+                            </div>
+                        </div>
+                        <div class="stat-card info">
+                            <div class="stat-icon"><i class="fas fa-award"></i></div>
+                            <div class="stat-info">
+                                <p>Siswa Tuntas</p>
+                                <h3 id="siswaTuntas">0</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-charts">
+                        <div class="chart-container">
+                            <h3>Distribusi Nilai</h3>
+                            <canvas id="distributionChart"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <h3>Perbandingan Jenis Penilaian</h3>
+                            <canvas id="comparisonChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="recent-activity">
+                        <h3>Aktivitas Terbaru</h3>
+                        <div id="activityList" class="activity-list"></div>
+                    </div>
+                </section>
+
+                <!-- Ulangan Harian Section -->
+                <section id="nilai-ulangan" class="section">
+                    <div class="section-header">
+                        <h2>Penilaian Ulangan Harian</h2>
+                        <button class="btn btn-primary" onclick="openModal('modalUlanganHarian')">
+                            <i class="fas fa-plus"></i> Tambah Penilaian
+                        </button>
+                    </div>
+                    <div class="filters">
+                        <select id="filterUlanganHarian" class="filter-select">
+                            <option value="">Semua</option>
+                            <option value="1">Ulangan 1</option>
+                            <option value="2">Ulangan 2</option>
+                            <option value="3">Ulangan 3</option>
+                        </select>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Nama Siswa</th>
+                                    <th>Ulangan 1</th>
+                                    <th>Ulangan 2</th>
+                                    <th>Ulangan 3</th>
+                                    <th>Rata-rata</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelUlanganHarian"></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Penilaian Sumatif Section -->
+                <section id="nilai-sumatif" class="section">
+                    <div class="section-header">
+                        <h2>Penilaian Sumatif</h2>
+                        <button class="btn btn-primary" onclick="openModal('modalSumatif')">
+                            <i class="fas fa-plus"></i> Tambah Penilaian
+                        </button>
+                    </div>
+                    <div class="filters">
+                        <select id="filterSumatif" class="filter-select">
+                            <option value="">Semua</option>
+                            <option value="1">Sumatif 1</option>
+                            <option value="2">Sumatif 2</option>
+                            <option value="3">Sumatif 3</option>
+                        </select>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Nama Siswa</th>
+                                    <th>Sumatif 1</th>
+                                    <th>Sumatif 2</th>
+                                    <th>Sumatif 3</th>
+                                    <th>Rata-rata</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelSumatif"></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Ujian Akhir Section -->
+                <section id="nilai-ujian" class="section">
+                    <div class="section-header">
+                        <h2>Ujian Akhir</h2>
+                        <button class="btn btn-primary" onclick="openModal('modalUjian')">
+                            <i class="fas fa-plus"></i> Tambah Penilaian
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Nama Siswa</th>
+                                    <th>Ujian Akhir</th>
+                                    <th>Keterangan</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelUjian"></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Tugas Praktik Section -->
+                <section id="tugas-praktek" class="section">
+                    <div class="section-header">
+                        <h2>Tugas Praktik</h2>
+                        <button class="btn btn-primary" onclick="openModal('modalTugasPraktek')">
+                            <i class="fas fa-plus"></i> Tambah Penilaian
+                        </button>
+                    </div>
+                    <div class="filters">
+                        <select id="filterTugasPraktek" class="filter-select">
+                            <option value="">Semua</option>
+                            <option value="1">Tugas Praktik 1</option>
+                            <option value="2">Tugas Praktik 2</option>
+                            <option value="3">Tugas Praktik 3</option>
+                        </select>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Nama Siswa</th>
+                                    <th>Praktik 1</th>
+                                    <th>Praktik 2</th>
+                                    <th>Praktik 3</th>
+                                    <th>Rata-rata</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelTugasPraktek"></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Tugas LKS Section -->
+                <section id="tugas-lks" class="section">
+                    <div class="section-header">
+                        <h2>Tugas LKS (Lembar Kerja Siswa)</h2>
+                        <button class="btn btn-primary" onclick="openModal('modalTugasLKS')">
+                            <i class="fas fa-plus"></i> Tambah Penilaian
+                        </button>
+                    </div>
+                    <div class="filters">
+                        <select id="filterTugasLKS" class="filter-select">
+                            <option value="">Semua</option>
+                            <option value="1">LKS 1</option>
+                            <option value="2">LKS 2</option>
+                            <option value="3">LKS 3</option>
+                        </select>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Nama Siswa</th>
+                                    <th>LKS 1</th>
+                                    <th>LKS 2</th>
+                                    <th>LKS 3</th>
+                                    <th>Rata-rata</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelTugasLKS"></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Tugas Mandiri Section -->
+                <section id="tugas-mandiri" class="section">
+                    <div class="section-header">
+                        <h2>Tugas Mandiri</h2>
+                        <button class="btn btn-primary" onclick="openModal('modalTugasMandiri')">
+                            <i class="fas fa-plus"></i> Tambah Penilaian
+                        </button>
+                    </div>
+                    <div class="filters">
+                        <select id="filterTugasMandiri" class="filter-select">
+                            <option value="">Semua</option>
+                            <option value="1">Tugas Mandiri 1</option>
+                            <option value="2">Tugas Mandiri 2</option>
+                            <option value="3">Tugas Mandiri 3</option>
+                        </select>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Nama Siswa</th>
+                                    <th>Mandiri 1</th>
+                                    <th>Mandiri 2</th>
+                                    <th>Mandiri 3</th>
+                                    <th>Rata-rata</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelTugasMandiri"></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Tugas Kelompok Section -->
+                <section id="tugas-kelompok" class="section">
+                    <div class="section-header">
+                        <h2>Tugas Kelompok</h2>
+                        <button class="btn btn-primary" onclick="openModal('modalTugasKelompok')">
+                            <i class="fas fa-plus"></i> Tambah Penilaian
+                        </button>
+                    </div>
+                    <div class="filters">
+                        <select id="filterTugasKelompok" class="filter-select">
+                            <option value="">Semua</option>
+                            <option value="1">Kelompok 1</option>
+                            <option value="2">Kelompok 2</option>
+                            <option value="3">Kelompok 3</option>
+                        </select>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Nama Siswa</th>
+                                    <th>Kelompok 1</th>
+                                    <th>Kelompok 2</th>
+                                    <th>Kelompok 3</th>
+                                    <th>Rata-rata</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelTugasKelompok"></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Rekap Nilai Section -->
+                <section id="rekap" class="section">
+                    <div class="section-header">
+                        <h2>Rekap Nilai Akhir</h2>
+                        <button class="btn btn-success" onclick="exportToExcel()">
+                            <i class="fas fa-download"></i> Export ke Excel
+                        </button>
+                    </div>
+                    <div class="rekap-filters">
+                        <input type="text" placeholder="Cari nama siswa..." id="searchRekap" class="filter-input">
+                        <select id="sortRekap" class="filter-select">
+                            <option value="nama">Urutkan: Nama</option>
+                            <option value="nilai">Urutkan: Nilai Tertinggi</option>
+                            <option value="nilai-desc">Urutkan: Nilai Terendah</option>
+                        </select>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="data-table rekap-table">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Nama Siswa</th>
+                                    <th>Ulangan</th>
+                                    <th>Sumatif</th>
+                                    <th>Ujian</th>
+                                    <th>Praktik</th>
+                                    <th>LKS</th>
+                                    <th>Mandiri</th>
+                                    <th>Kelompok</th>
+                                    <th>Nilai Akhir</th>
+                                    <th>Grade</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelRekap"></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Pengaturan Section -->
+                <section id="pengaturan" class="section">
+                    <div class="settings-container">
+                        <h2>Pengaturan Sistem</h2>
+                        
+                        <div class="settings-group">
+                            <h3>Bobot Penilaian</h3>
+                            <div class="setting-item">
+                                <label>Ulangan Harian (%)</label>
+                                <input type="number" id="bobotUlangan" value="20" min="0" max="100">
+                            </div>
+                            <div class="setting-item">
+                                <label>Penilaian Sumatif (%)</label>
+                                <input type="number" id="bobotSumatif" value="20" min="0" max="100">
+                            </div>
+                            <div class="setting-item">
+                                <label>Ujian Akhir (%)</label>
+                                <input type="number" id="bobotUjian" value="30" min="0" max="100">
+                            </div>
+                            <div class="setting-item">
+                                <label>Tugas Praktik (%)</label>
+                                <input type="number" id="bobotPraktek" value="10" min="0" max="100">
+                            </div>
+                            <div class="setting-item">
+                                <label>Tugas LKS (%)</label>
+                                <input type="number" id="bobotLKS" value="5" min="0" max="100">
+                            </div>
+                            <div class="setting-item">
+                                <label>Tugas Mandiri (%)</label>
+                                <input type="number" id="bobotMandiri" value="5" min="0" max="100">
+                            </div>
+                            <div class="setting-item">
+                                <label>Tugas Kelompok (%)</label>
+                                <input type="number" id="bobotKelompok" value="10" min="0" max="100">
+                            </div>
+                        </div>
+
+                        <div class="settings-group">
+                            <h3>Kriteria Penilaian</h3>
+                            <div class="setting-item">
+                                <label>KKM (Kriteria Ketuntasan Minimum)</label>
+                                <input type="number" id="kkm" value="75" min="0" max="100">
+                            </div>
+                            <div class="setting-item">
+                                <label>Nilai Minimal Grade A</label>
+                                <input type="number" id="nilaiA" value="85" min="0" max="100">
+                            </div>
+                            <div class="setting-item">
+                                <label>Nilai Minimal Grade B</label>
+                                <input type="number" id="nilaiB" value="75" min="0" max="100">
+                            </div>
+                            <div class="setting-item">
+                                <label>Nilai Minimal Grade C</label>
+                                <input type="number" id="nilaiC" value="60" min="0" max="100">
+                            </div>
+                        </div>
+
+                        <div class="settings-group">
+                            <h3>Data Siswa</h3>
+                            <button class="btn btn-info" onclick="openModal('modalTambahSiswa')">
+                                <i class="fas fa-user-plus"></i> Tambah Siswa
+                            </button>
+                            <div id="daftarSiswa" class="siswa-list"></div>
+                        </div>
+
+                        <div class="settings-actions">
+                            <button class="btn btn-success" onclick="simpanPengaturan()">
+                                <i class="fas fa-save"></i> Simpan Pengaturan
+                            </button>
+                            <button class="btn btn-warning" onclick="resetData()">
+                                <i class="fas fa-redo"></i> Reset Data
+                            </button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal untuk Ulangan Harian -->
+    <div id="modalUlanganHarian" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Tambah/Edit Ulangan Harian</h2>
+                <span class="close" onclick="closeModal('modalUlanganHarian')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="formUlanganHarian">
+                    <div class="form-group">
+                        <label>Nama Siswa</label>
+                        <select id="siswaUlangan" class="form-control" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Tipe Ulangan</label>
+                        <select id="tipeUlangan" class="form-control" required>
+                            <option value="1">Ulangan 1</option>
+                            <option value="2">Ulangan 2</option>
+                            <option value="3">Ulangan 3</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Nilai (0-100)</label>
+                        <input type="number" id="nilaiUlangan" class="form-control" min="0" max="100" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Catatan</label>
+                        <textarea id="catatanUlangan" class="form-control" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('modalUlanganHarian')">Batal</button>
+                <button class="btn btn-primary" onclick="simpanUlanganHarian()">Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal untuk Sumatif -->
+    <div id="modalSumatif" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Tambah/Edit Penilaian Sumatif</h2>
+                <span class="close" onclick="closeModal('modalSumatif')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="formSumatif">
+                    <div class="form-group">
+                        <label>Nama Siswa</label>
+                        <select id="siswaSumatif" class="form-control" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Tipe Sumatif</label>
+                        <select id="tipeSumatif" class="form-control" required>
+                            <option value="1">Sumatif 1</option>
+                            <option value="2">Sumatif 2</option>
+                            <option value="3">Sumatif 3</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Nilai (0-100)</label>
+                        <input type="number" id="nilaiSumatif" class="form-control" min="0" max="100" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Catatan</label>
+                        <textarea id="catatanSumatif" class="form-control" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('modalSumatif')">Batal</button>
+                <button class="btn btn-primary" onclick="simpanSumatif()">Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal untuk Ujian Akhir -->
+    <div id="modalUjian" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Tambah/Edit Ujian Akhir</h2>
+                <span class="close" onclick="closeModal('modalUjian')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="formUjian">
+                    <div class="form-group">
+                        <label>Nama Siswa</label>
+                        <select id="siswaUjian" class="form-control" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Nilai Ujian (0-100)</label>
+                        <input type="number" id="nilaiUjianAkhir" class="form-control" min="0" max="100" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Tanggal Ujian</label>
+                        <input type="date" id="tanggalUjian" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Catatan</label>
+                        <textarea id="catatanUjian" class="form-control" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('modalUjian')">Batal</button>
+                <button class="btn btn-primary" onclick="simpanUjian()">Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal untuk Tugas Praktik -->
+    <div id="modalTugasPraktek" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Tambah/Edit Tugas Praktik</h2>
+                <span class="close" onclick="closeModal('modalTugasPraktek')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="formTugasPraktek">
+                    <div class="form-group">
+                        <label>Nama Siswa</label>
+                        <select id="siswaTugasPraktek" class="form-control" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Tipe Praktik</label>
+                        <select id="tipePraktek" class="form-control" required>
+                            <option value="1">Praktik 1</option>
+                            <option value="2">Praktik 2</option>
+                            <option value="3">Praktik 3</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Nilai (0-100)</label>
+                        <input type="number" id="nilaiPraktek" class="form-control" min="0" max="100" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Catatan</label>
+                        <textarea id="catatanPraktek" class="form-control" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('modalTugasPraktek')">Batal</button>
+                <button class="btn btn-primary" onclick="simpanTugasPraktek()">Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal untuk Tugas LKS -->
+    <div id="modalTugasLKS" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Tambah/Edit Tugas LKS</h2>
+                <span class="close" onclick="closeModal('modalTugasLKS')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="formTugasLKS">
+                    <div class="form-group">
+                        <label>Nama Siswa</label>
+                        <select id="siswaTugasLKS" class="form-control" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Tipe LKS</label>
+                        <select id="tipeLKS" class="form-control" required>
+                            <option value="1">LKS 1</option>
+                            <option value="2">LKS 2</option>
+                            <option value="3">LKS 3</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Nilai (0-100)</label>
+                        <input type="number" id="nilaiLKS" class="form-control" min="0" max="100" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Catatan</label>
+                        <textarea id="catatanLKS" class="form-control" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('modalTugasLKS')">Batal</button>
+                <button class="btn btn-primary" onclick="simpanTugasLKS()">Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal untuk Tugas Mandiri -->
+    <div id="modalTugasMandiri" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Tambah/Edit Tugas Mandiri</h2>
+                <span class="close" onclick="closeModal('modalTugasMandiri')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="formTugasMandiri">
+                    <div class="form-group">
+                        <label>Nama Siswa</label>
+                        <select id="siswaTugasMandiri" class="form-control" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Tipe Tugas Mandiri</label>
+                        <select id="tipeMandiri" class="form-control" required>
+                            <option value="1">Tugas Mandiri 1</option>
+                            <option value="2">Tugas Mandiri 2</option>
+                            <option value="3">Tugas Mandiri 3</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Nilai (0-100)</label>
+                        <input type="number" id="nilaiMandiri" class="form-control" min="0" max="100" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Catatan</label>
+                        <textarea id="catatanMandiri" class="form-control" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('modalTugasMandiri')">Batal</button>
+                <button class="btn btn-primary" onclick="simpanTugasMandiri()">Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal untuk Tugas Kelompok -->
+    <div id="modalTugasKelompok" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Tambah/Edit Tugas Kelompok</h2>
+                <span class="close" onclick="closeModal('modalTugasKelompok')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="formTugasKelompok">
+                    <div class="form-group">
+                        <label>Nama Siswa</label>
+                        <select id="siswaTugasKelompok" class="form-control" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Tipe Kelompok</label>
+                        <select id="tipeKelompok" class="form-control" required>
+                            <option value="1">Kelompok 1</option>
+                            <option value="2">Kelompok 2</option>
+                            <option value="3">Kelompok 3</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Nilai (0-100)</label>
+                        <input type="number" id="nilaiKelompok" class="form-control" min="0" max="100" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Catatan</label>
+                        <textarea id="catatanKelompok" class="form-control" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('modalTugasKelompok')">Batal</button>
+                <button class="btn btn-primary" onclick="simpanTugasKelompok()">Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal untuk Tambah Siswa -->
+    <div id="modalTambahSiswa" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Tambah Siswa Baru</h2>
+                <span class="close" onclick="closeModal('modalTambahSiswa')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="formTambahSiswa">
+                    <div class="form-group">
+                        <label>Nama Lengkap</label>
+                        <input type="text" id="namaSiswa" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>NIS</label>
+                        <input type="text" id="nisSiswa" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Kelas</label>
+                        <input type="text" id="kelasSiswa" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>No. Absen</label>
+                        <input type="number" id="abenSiswa" class="form-control" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('modalTambahSiswa')">Batal</button>
+                <button class="btn btn-primary" onclick="simpanSiswa()">Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overlay untuk Modal -->
+    <div id="modalOverlay" class="modal-overlay"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
